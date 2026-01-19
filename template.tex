@@ -1,0 +1,124 @@
+% =========================
+% CV TEMPLATE — FIXED COLUMNS, DIDOT
+% Compatible with existing cv.md
+% =========================
+
+\documentclass{article}
+
+% Page geometry
+\usepackage[letterpaper,margin=1in]{geometry}
+
+% Font handling (XeLaTeX)
+\usepackage{fontspec}
+\setmainfont[Ligatures=TeX]{Didot}
+
+\usepackage{microtype}
+
+% Line spacing
+\usepackage{setspace}
+\setstretch{1.015}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% Hyperlinks
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  urlcolor=black,
+  linkcolor=black
+}
+% Allow line breaks in long DOI / URL strings
+\makeatletter
+\def\UrlBreaks{\do\/\do\.\do\-\do\_\do\%}
+\makeatother
+
+
+% Pandoc compatibility
+\providecommand{\tightlist}{}
+
+% =========================
+% SECTION CONTROL
+% =========================
+
+\setcounter{secnumdepth}{0}
+
+\makeatletter
+\renewcommand{\section}{
+  \@startsection
+    {section}
+    {1}
+    {0pt}
+    {10pt}
+    {4pt}
+    {\normalfont\bfseries\MakeUppercase}
+}
+\makeatother
+
+% =========================
+% FIXED COLUMN WIDTHS
+% =========================
+% These widths MUST sum to <= \textwidth (including spacing)
+
+\newlength{\cvTitleWidth}
+\newlength{\cvDateWidth}
+\newlength{\cvInstWidth}
+
+% Tuned for US Letter, 1in margins, 10.5pt Didot
+\setlength{\cvTitleWidth}{6.4cm}
+\setlength{\cvDateWidth}{3.2cm}
+\setlength{\cvInstWidth}{6.2cm}
+
+% =========================
+% CV COMMANDS
+% =========================
+
+% Core row primitive — DO NOT change call signature
+\newcommand{\cvrole}[3]{%
+  % Line 1: title only
+  \textbf{#1}\par
+  % Line 2: dates + institution, fixed columns
+  \noindent
+  \hbox to \textwidth{%
+    \hspace*{\cvTitleWidth}%
+    \parbox[t]{\cvDateWidth}{#2}%
+    \hspace{0.6em}%
+    \parbox[t]{\cvInstWidth}{#3}%
+  }%
+  \par
+  \vspace{4pt}
+}
+
+
+% Bulletless list used throughout your Markdown
+\newenvironment{cvlist}{
+  \begin{list}{}{
+    \setlength{\leftmargin}{1.25em}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parsep}{0pt}
+    \setlength{\topsep}{0pt}
+    \setlength{\partopsep}{0pt}
+  }
+}{
+  \end{list}
+}
+
+% =========================
+\begin{document}
+
+% ===== Header (right-offset block, left-aligned) =====
+\hfill
+\begin{minipage}{0.45\textwidth}
+{\Large\bfseries $name$}\par
+\vspace{4pt}
+$affiliation$\par
+$address1$\par
+$address2$\par
+Email: \href{mailto:$email$}{$email$}\par
+Phone: $phone$
+\end{minipage}
+
+\vspace{12pt}
+
+$body$
+
+\end{document}
