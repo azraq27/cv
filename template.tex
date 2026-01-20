@@ -1,22 +1,27 @@
 % =========================
-% CV TEMPLATE — FIXED COLUMNS, DIDOT
-% Compatible with existing cv.md
+% CV TEMPLATE — Pandoc + Lua PMID citations
+% Adds true bibliography layout for publications
 % =========================
 
-\documentclass{article}
+\documentclass[a4paper,11pt]{article}
 
 % Page geometry
-\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[top=0.75in, bottom=0.75in, left=0.6in, right=0.6in]{geometry}
 
-% Font handling (XeLaTeX)
+% Font (Didot Regular)
 \usepackage{fontspec}
-\setmainfont[Ligatures=TeX]{Didot}
+\setmainfont[
+    Ligatures=TeX,
+    UprightFont = *,
+    ItalicFont = * Italic,
+    BoldFont = * Bold,
+  ]{Didot}
 
 \usepackage{microtype}
 
-% Line spacing
+% Spacing
 \usepackage{setspace}
-\setstretch{1.015}
+\setstretch{1.0}
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
 
@@ -27,69 +32,68 @@
   urlcolor=black,
   linkcolor=black
 }
-% Allow line breaks in long DOI / URL strings
-\makeatletter
-\def\UrlBreaks{\do\/\do\.\do\-\do\_\do\%}
-\makeatother
-
 
 % Pandoc compatibility
 \providecommand{\tightlist}{}
 
-% =========================
-% SECTION CONTROL
-% =========================
-
+% -------------------------
+% Section styling (no numbering)
+% -------------------------
 \setcounter{secnumdepth}{0}
-
-\makeatletter
-\renewcommand{\section}{
-  \@startsection
-    {section}
-    {1}
-    {0pt}
-    {10pt}
-    {4pt}
-    {\normalfont\bfseries\MakeUppercase}
+\newcommand{\cvsectiontitle}[1]{%
+  \begingroup
+  \ifdefined\addfontfeatures
+    \addfontfeatures{Letters=SmallCaps}%
+  \fi
+  \scshape #1%
+  \endgroup
 }
-\makeatother
+\newcommand{\cvsection}[1]{%
+  \vspace{12pt}%
+  {\Large\raggedright\cvsectiontitle{#1}}\par
+  \vspace{2pt}\hrule\vspace{6pt}%
+}
+\renewcommand{\section}[1]{\cvsection{#1}}
 
-% =========================
-% FIXED COLUMN WIDTHS
-% =========================
-% These widths MUST sum to <= \textwidth (including spacing)
+% -------------------------
+% Existing CV primitives (keep yours intact)
+% -------------------------
 
-\newlength{\cvTitleWidth}
-\newlength{\cvDateWidth}
-\newlength{\cvInstWidth}
+% Fixed columns for cvrole (Title | Institution | Dates)
+\newlength{\RoleW}
+\newlength{\InstW}
+\newlength{\DateW}
+\newlength{\RoleGap}
+\newlength{\InstGap}
+\setlength{\RoleGap}{0.8em}
+\setlength{\InstGap}{0.8em}
+\setlength{\RoleW}{0.44\textwidth}
+\setlength{\InstW}{0.33\textwidth}
+\setlength{\DateW}{\textwidth}
+\addtolength{\DateW}{-\RoleW}
+\addtolength{\DateW}{-\InstW}
+\addtolength{\DateW}{-\RoleGap}
+\addtolength{\DateW}{-\InstGap}
 
-% Tuned for US Letter, 1in margins, 10.5pt Didot
-\setlength{\cvTitleWidth}{6.4cm}
-\setlength{\cvDateWidth}{3.2cm}
-\setlength{\cvInstWidth}{6.2cm}
+\newenvironment{cvroles}{\vspace{0pt}}{\vspace{0pt}}
+\newcommand{\cvrolesep}{\vspace{6pt}}
 
-% =========================
-% CV COMMANDS
-% =========================
-
-% Core row primitive — DO NOT change call signature
 \newcommand{\cvrole}[3]{%
-  % Line 1: title only
-  \textbf{#1}\par
-  % Line 2: dates + institution, fixed columns
   \noindent
   \hbox to \textwidth{%
-    \hspace*{\cvTitleWidth}%
-    \parbox[t]{\cvDateWidth}{#2}%
-    \hspace{0.6em}%
-    \parbox[t]{\cvInstWidth}{#3}%
-  }%
-  \par
-  \vspace{4pt}
+    \parbox[t]{\RoleW}{#1}%
+    \hspace*{\RoleGap}%
+    \parbox[t]{\InstW}{#2}%
+    \hspace*{\InstGap}%
+    \parbox[t]{\DateW}{\raggedleft #3}%
+  }\par
 }
 
+\newcommand{\cvnote}[1]{%
+  \noindent\hspace*{1.2em}{\small\textit{#1}}\par
+}
 
-% Bulletless list used throughout your Markdown
+% Bulletless list (no enumitem dependency)
 \newenvironment{cvlist}{
   \begin{list}{}{
     \setlength{\leftmargin}{1.25em}
@@ -102,22 +106,83 @@
   \end{list}
 }
 
+\newenvironment{cvitems}{%
+  \begin{list}{}{%
+    \setlength{\leftmargin}{0pt}%
+    \setlength{\labelwidth}{0pt}%
+    \setlength{\labelsep}{0pt}%
+    \setlength{\itemindent}{0pt}%
+    \setlength{\itemsep}{4pt}%
+    \setlength{\parsep}{0pt}%
+    \setlength{\topsep}{2pt}%
+  }%
+}{\end{list}}
+
+\newcommand{\cvgrant}[4]{%
+  \item \textbf{#1}\par
+  \textit{#2}\hfill \textbf{#3}\par
+  #4
+}
+\newcommand{\cvlecture}[3]{\item \textbf{#1}\par #2\hfill #3}
+\newcommand{\cvline}[1]{\item #1}
+
+% Bold inline subheading used inside sections (as in cv.md)
+\newcommand{\cvsubhead}[1]{%
+  \textbf{#1}\par\vspace{2pt}%
+}
+
+
+% -------------------------
+% True bibliography layout for publications
+% -------------------------
+\newlength{\pubhang}
+\setlength{\pubhang}{1.8em} % tweak if desired
+
+\newenvironment{pubs}{%
+  \begin{list}{}{%
+    \setlength{\leftmargin}{1.8em}%
+    \setlength{\itemindent}{-1.8em}%
+    \setlength{\itemsep}{4pt}%
+    \setlength{\topsep}{2pt}%
+    \setlength{\parsep}{0pt}%
+  }%
+}{\end{list}}
+\newcommand{\cvpub}[1]{\item #1}
+
+% 2-col pairs
+% 2-col pairs (left label | right date)
+\newlength{\PairLeftW}
+\newlength{\PairRightW}
+\setlength{\PairLeftW}{0.78\textwidth}
+\setlength{\PairRightW}{0.22\textwidth}
+
+\newenvironment{cvpairs}{\vspace{-2pt}}{\vspace{2pt}}
+\newcommand{\cvpair}[2]{%
+  \noindent
+  \hbox to \textwidth{%
+    \parbox[t]{\PairLeftW}{#1}%
+    \parbox[t]{\PairRightW}{\raggedleft #2}%
+  }\par
+}
+
+% Optional: gives TeX extra flexibility to avoid overfull boxes in dense citations
+\setlength{\emergencystretch}{2em}
+
+% -------------------------
+% Header (centered, manual-style)
+% -------------------------
+\newcommand{\cvheader}{%
+  \begin{center}
+    {\Huge \textbf{$name$}} \\[6pt]
+    $affiliation$ | $address1$, $address2$ \\[3pt]
+    \href{mailto:$email$}{$email$} | $phone$
+  \end{center}
+}
+
 % =========================
 \begin{document}
 
-% ===== Header (right-offset block, left-aligned) =====
-\hfill
-\begin{minipage}{0.45\textwidth}
-{\Large\bfseries $name$}\par
-\vspace{4pt}
-$affiliation$\par
-$address1$\par
-$address2$\par
-Email: \href{mailto:$email$}{$email$}\par
-Phone: $phone$
-\end{minipage}
-
-\vspace{12pt}
+\cvheader
 
 $body$
 

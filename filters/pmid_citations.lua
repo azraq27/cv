@@ -1,15 +1,18 @@
 -- pmid_citations.lua
--- Pandoc Lua filter: replace `PMID:####` with a formatted reference string using a local JSON db.
---
--- Build flow:
---   1) python3 scripts/pmid_fetch.py --md cv.md --out .cache/pubmed.json
---   2) pandoc cv.md --lua-filter=filters/pmid_citations.lua -M pmid_db=.cache/pubmed.json ...
+-- Replace PMID tokens with formatted citations.
+-- For LaTeX output, emit \cvpub{...} entries to produce true hanging-indent bibliography list.
 
 local json = require('pandoc.json')
 
 local db = nil
 local db_loaded_path = nil
-local cfg = { style = "cv", max_authors = 6 }
+local cfg = {
+  style = "cv",
+  max_authors = 6,
+  -- Name to bold: default matches your CV.
+  bold_family = "Gross",
+  bold_initials = "WL",
+}
 
 local function read_file(path)
   local f = io.open(path, "r")
@@ -35,18 +38,6 @@ end
 
 local function trim(s)
   return (s:gsub("^%s+", ""):gsub("%s+$", ""))
-end
-
-local function format_authors(authors, maxn)
-  if not authors or #authors == 0 then return "" end
-  maxn = maxn or 6
-  local use_etal = (#authors > maxn)
-  local n = math.min(#authors, maxn)
-  local out = {}
-  for i=1,n do table.insert(out, authors[i]) end
-  local s = table.concat(out, ", ")
-  if use_etal then s = s .. ", et al." end
-  return s
 end
 
 local function first_year(pubdate)
@@ -107,7 +98,90 @@ local function ensure_db(meta)
   io.stderr:flush()
 end
 
-local function format_reference(raw, pmid, style, max_authors)
+-- Helpers to create inlines
+local function S(t) return pandoc.Str(t) end
+local function SP(t) return pandoc.Space() end
+local function R(tex) return pandoc.RawInline("latex", tex) end
+
+-- Detect and bold "Gross WL" author tokens as PubMed typically provides: "Gross WL"
+-- Also catch "Gross, WL" (rare) and "Gross W L".
+local function is_target_author(author_str)
+  if not author_str or author_str == "" then return false end
+  local s = author_str
+
+  -- Normalize: remove periods, collapse spaces, remove commas
+  s = s:gsub("%.", "")
+  s = s:gsub(",", "")
+  s = s:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+
+  -- Expect forms like "Gross WL" or "Gross W L"
+  if not s:match("^" .. cfg.bold_family .. "%s") then return false end
+
+  -- initials part after family
+  local initials = s:gsub("^" .. cfg.bold_family .. "%s+", "")
+  initials = initials:gsub("%s+", "")
+
+  return (initials == cfg.bold_initials)
+end
+
+local function author_inline(author_str)
+  if is_target_author(author_str) then
+    if FORMAT and FORMAT:match("latex") then
+      return { R("\\textbf{"), S(author_str), R("}") }
+    else
+      return { pandoc.Strong({ S(author_str) }) }
+    end
+  else
+    return { S(author_str) }
+  end
+end
+
+local function join_authors(authors, maxn)
+  local inlines = {}
+  if not authors or #authors == 0 then return inlines end
+
+  maxn = maxn or 6
+  local use_etal = (#authors > maxn)
+  local n = math.min(#authors, maxn)
+
+  for i=1,n do
+    local a = authors[i]
+    local name = a
+    -- author entries come from PubMed as "Last FM" in esummary
+    for _, x in ipairs(author_inline(name)) do table.insert(inlines, x) end
+    if i < n then
+      table.insert(inlines, S(","))
+      table.insert(inlines, SP())
+    end
+  end
+
+  if use_etal then
+    table.insert(inlines, S(","))
+    table.insert(inlines, SP())
+    table.insert(inlines, S("et"))
+    table.insert(inlines, SP())
+    table.insert(inlines, S("al."))
+  end
+
+  return inlines
+end
+
+-- Insert LaTeX allowbreak points after DOI punctuation, but ONLY as raw LaTeX inlines
+local function doi_inlines(doi)
+  local inlines = {}
+  for c in doi:gmatch(".") do
+    table.insert(inlines, S(c))
+    if FORMAT and FORMAT:match("latex") then
+      if c == "/" or c == "." or c == "-" or c == "_" then
+        -- Terminate the control sequence so following letters don't attach.
+        table.insert(inlines, R("\\allowbreak{}"))
+      end
+    end
+  end
+  return inlines
+end
+
+local function format_reference_inlines(raw, pmid, style, max_authors)
   local authors = {}
   if raw.authors then
     for _, a in ipairs(raw.authors) do
@@ -115,7 +189,6 @@ local function format_reference(raw, pmid, style, max_authors)
     end
   end
 
-  local a_str = format_authors(authors, max_authors)
   local title = clean_title(raw.title or "")
   local journal = raw.source or raw.fulljournalname or ""
   local year = first_year(raw.pubdate or "")
@@ -124,22 +197,27 @@ local function format_reference(raw, pmid, style, max_authors)
   local pages = raw.pages or ""
   local doi = extract_doi(raw.articleids)
 
-  if style == "short" then
-    local parts = {}
-    if a_str ~= "" then table.insert(parts, a_str) end
-    if journal ~= "" then table.insert(parts, journal) end
-    if year ~= "" then table.insert(parts, year) end
-    table.insert(parts, "PMID:" .. pmid)
-    return table.concat(parts, ". ") .. "."
-  end
-
   local out = {}
-  if a_str ~= "" then
-    table.insert(out, a_str .. " (" .. year .. ") " .. title .. ".")
-  else
-    table.insert(out, "(" .. year .. ") " .. title .. ".")
+
+  -- Authors.
+  local a_in = join_authors(authors, max_authors)
+  for _, x in ipairs(a_in) do table.insert(out, x) end
+  if #a_in > 0 then
+    table.insert(out, S("."))
+    table.insert(out, SP())
   end
 
+  -- Year and title.
+  if year ~= "" then
+    table.insert(out, S("(" .. year .. ")"))
+    table.insert(out, SP())
+  end
+  if title ~= "" then
+    table.insert(out, S(title .. "."))
+    table.insert(out, SP())
+  end
+
+  -- Journal; vol(issue):pages.
   local vinfo = ""
   if volume ~= "" then vinfo = volume end
   if issue ~= "" then vinfo = vinfo .. "(" .. issue .. ")" end
@@ -147,25 +225,35 @@ local function format_reference(raw, pmid, style, max_authors)
     if vinfo ~= "" then vinfo = vinfo .. ":" .. pages else vinfo = pages end
   end
 
-  if journal ~= "" and vinfo ~= "" then
-    table.insert(out, journal .. "; " .. vinfo .. ".")
-  elseif journal ~= "" then
-    table.insert(out, journal .. ".")
+  if journal ~= "" then
+    if vinfo ~= "" then
+      table.insert(out, S(journal .. "; " .. vinfo .. "."))
+    else
+      table.insert(out, S(journal .. "."))
+    end
+    table.insert(out, SP())
   elseif vinfo ~= "" then
-    table.insert(out, vinfo .. ".")
+    table.insert(out, S(vinfo .. "."))
+    table.insert(out, SP())
   end
 
+  -- DOI (lowercase label as in your examples)
   if doi and doi ~= "" then
-    table.insert(out, "DOI:" .. doi .. ".")
+    table.insert(out, S("doi:"))
+    for _, x in ipairs(doi_inlines(doi)) do table.insert(out, x) end
+    table.insert(out, S("."))
+    table.insert(out, SP())
   end
 
-  table.insert(out, "PMID:" .. pmid .. ".")
+  -- PMID always at end
+  table.insert(out, S("PMID:" .. pmid .. "."))
 
-  return table.concat(out, " ")
+  return out
 end
 
 function Meta(meta)
   ensure_db(meta)
+
   local style_from_meta = meta_lookup(meta, "pmid_style")
   if style_from_meta then cfg.style = tostring(style_from_meta) end
 
@@ -174,6 +262,13 @@ function Meta(meta)
     local n = tonumber(tostring(authors_from_meta))
     if n then cfg.max_authors = n end
   end
+
+  -- Optional: allow override in YAML meta if desired
+  local bold_family = meta_lookup(meta, "pmid_bold_family")
+  local bold_initials = meta_lookup(meta, "pmid_bold_initials")
+  if bold_family then cfg.bold_family = tostring(bold_family) end
+  if bold_initials then cfg.bold_initials = tostring(bold_initials) end
+
   return meta
 end
 
@@ -194,5 +289,19 @@ function Str(el)
   local style = cfg.style or "cv"
   local max_authors = cfg.max_authors or 6
 
-  return pandoc.Str(format_reference(raw, pmid, style, max_authors))
+  local inlines = format_reference_inlines(raw, pmid, style, max_authors)
+
+  -- For LaTeX output: wrap each citation as \cvpub{...}
+  if FORMAT and FORMAT:match("latex") then
+    -- Emit: \cvpub{<inlines>}
+    -- Using RawInline for the wrapper braces so LaTeX sees the macro and arguments.
+    local wrapped = {}
+    table.insert(wrapped, R("\\cvpub{"))
+    for _, x in ipairs(inlines) do table.insert(wrapped, x) end
+    table.insert(wrapped, R("}"))
+    return pandoc.Span(wrapped)
+  end
+
+  -- Other formats: just return the citation inlines
+  return pandoc.Span(inlines)
 end
