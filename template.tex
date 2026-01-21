@@ -38,6 +38,19 @@
 % Pandoc compatibility
 \providecommand{\tightlist}{}
 
+% Page-break guard using TeX primitives (no external packages)
+\newcommand{\needspace}[1]{%
+  \begingroup
+  \dimen0=#1\relax
+  \ifdim\pagegoal=\maxdimen
+  \else
+    \ifdim\dimexpr\pagegoal-\pagetotal<\dimen0\relax
+      \pagebreak
+    \fi
+  \fi
+  \endgroup
+}
+
 % -------------------------
 % Section styling (no numbering)
 % -------------------------
@@ -53,6 +66,7 @@
   \endgroup
 }
 \newcommand{\cvsection}[1]{%
+  \needspace{6\baselineskip}%
   \vspace{12pt}%
   {\Large\raggedright\cvsectiontitle{#1}}\par
   \vspace{3pt}\hrule\vspace{6pt}%
@@ -96,6 +110,13 @@
   \noindent\hspace*{1.2em}{\small\textit{#1}}\par
 }
 
+% Role + notes block that should stay together
+\newcommand{\cvroleblock}[4]{%
+  \needspace{3\baselineskip}%
+  \cvrole{#1}{#2}{#3}%
+  #4%
+}
+
 % Bulletless list (no enumitem dependency)
 \newenvironment{cvlist}{
   \begin{list}{}{
@@ -122,6 +143,7 @@
 }{\end{list}}
 
 \newcommand{\cvgrant}[4]{%
+  \needspace{5\baselineskip}%
   \item \textbf{#1}\par
   \textit{#2}\hfill \textbf{#3}\par
   #4
@@ -131,6 +153,7 @@
 
 % Bold inline subheading used inside sections (as in cv.md)
 \newcommand{\cvsubhead}[1]{%
+  \needspace{3\baselineskip}%
   \textbf{#1}\par
 }
 

@@ -35,9 +35,7 @@ phone: "414-955-4653"
 \cvrole{Post-doctoral Research Fellow}{Medical College of Wisconsin}{7/2013 -- 7/2014}
 \cvrole{Resident, Neurosurgery}{The Ohio State University}{7/2012 -- 6/2013}
 \cvrole{M.D.}{Medical College of Wisconsin}{8/2005 -- 5/2012}
-\cvrole{Ph.D., Biophysics}{Medical College of Wisconsin}{7/2007 -- 6/2010}
-\cvnote{Emphasis on Neuroscience and MRI, mentored by Dr. Jeffrey Binder, MD}
-\cvnote{Dissertation: ``Using fMRI to Improve Outcome in the Surgical Treatment of Temporal Lobe Epilepsy.''}
+\cvroleblock{Ph.D., Biophysics}{Medical College of Wisconsin}{7/2007 -- 6/2010}{\cvnote{Emphasis on Neuroscience and MRI, mentored by Dr. Jeffrey Binder, MD}\cvnote{Dissertation: ``Using fMRI to Improve Outcome in the Surgical Treatment of Temporal Lobe Epilepsy.''}}
 \cvrole{B.A., Psychology}{University of Wisconsin, Milwaukee}{8/2001 -- 5/2004}
 \end{cvroles}
 ```
@@ -161,10 +159,8 @@ PMID:16839289
 \begin{cvroles}
 \cvrole{Alex Skitowski (Mentee)}{MCW, Biophysics}{2024 -- present}
 \cvrole{Aleksandra Winiarz (Committee)}{MCW, Biophysics}{2021 -- present}
-\cvrole{Stephen Mazurchuk (Committee)}{MCW, Biophysics}{Graduated 2024}
-\cvnote{Dissertation: ``An Experiential Account of Semantic Category Organization in the Brain''}
-\cvrole{Alexander Helfand (Committee)}{MCW, Biophysics}{Graduated 2020}
-\cvnote{Dissertation: ``Toward a gold standard: An outcomes-based assessment of fMRI-based methods for probing language laterality in the brain''}
+\cvroleblock{Stephen Mazurchuk (Committee)}{MCW, Biophysics}{Graduated 2024}{\cvnote{Dissertation: ``An Experiential Account of Semantic Category Organization in the Brain''}}
+\cvroleblock{Alexander Helfand (Committee)}{MCW, Biophysics}{Graduated 2020}{\cvnote{Dissertation: ``Toward a gold standard: An outcomes-based assessment of fMRI-based methods for probing language laterality in the brain''}}
 \end{cvroles}
 
 \cvsubhead{Student Mentees (Residents \& Graduate)}
@@ -187,8 +183,7 @@ PMID:16839289
 \cvsubhead{Curriculum Development}
 \begin{cvroles}
 \cvrole{Fusion Curriculum}{MCW (Anesthesiology)}{2021 -- 2024}
-\cvrole{Adjunct Faculty}{Carroll University}{9/2013 -- 5/2014}
-\cvnote{PTH 560 - Pathology, PTH 405 - Neuroscience}
+\cvroleblock{Adjunct Faculty}{Carroll University}{9/2013 -- 5/2014}{\cvnote{PTH 560 - Pathology, PTH 405 - Neuroscience}}
 \end{cvroles}
 ```
 
