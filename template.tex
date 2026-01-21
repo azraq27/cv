@@ -33,6 +33,8 @@
   linkcolor=black
 }
 
+\newcommand{\cvsep}{\ \textbar\ }
+
 % Pandoc compatibility
 \providecommand{\tightlist}{}
 
@@ -44,14 +46,16 @@
   \begingroup
   \ifdefined\addfontfeatures
     \addfontfeatures{Letters=SmallCaps}%
+    \MakeUppercase{#1}%
+  \else
+    \scshape\MakeUppercase{#1}%
   \fi
-  \scshape #1%
   \endgroup
 }
 \newcommand{\cvsection}[1]{%
   \vspace{12pt}%
   {\Large\raggedright\cvsectiontitle{#1}}\par
-  \vspace{2pt}\hrule\vspace{6pt}%
+  \vspace{3pt}\hrule\vspace{6pt}%
 }
 \renewcommand{\section}[1]{\cvsection{#1}}
 
@@ -63,28 +67,27 @@
 \newlength{\RoleW}
 \newlength{\InstW}
 \newlength{\DateW}
-\newlength{\RoleGap}
-\newlength{\InstGap}
-\setlength{\RoleGap}{0.8em}
-\setlength{\InstGap}{0.8em}
-\setlength{\RoleW}{0.44\textwidth}
-\setlength{\InstW}{0.33\textwidth}
-\setlength{\DateW}{\textwidth}
-\addtolength{\DateW}{-\RoleW}
-\addtolength{\DateW}{-\InstW}
-\addtolength{\DateW}{-\RoleGap}
-\addtolength{\DateW}{-\InstGap}
+\newlength{\GutterA}
+\newlength{\GutterB}
+\setlength{\GutterA}{1.1em}
+\setlength{\GutterB}{1.1em}
+\setlength{\RoleW}{0.46\textwidth}
+\setlength{\InstW}{0.34\textwidth}
+\setlength{\DateW}{\dimexpr\textwidth-\RoleW-\InstW-\GutterA-\GutterB\relax}
 
-\newenvironment{cvroles}{\vspace{0pt}}{\vspace{0pt}}
-\newcommand{\cvrolesep}{\vspace{6pt}}
+\newenvironment{cvroles}{%
+  \vspace{0pt}%
+}{%
+  \vspace{6pt}%
+}
 
 \newcommand{\cvrole}[3]{%
   \noindent
   \hbox to \textwidth{%
     \parbox[t]{\RoleW}{#1}%
-    \hspace*{\RoleGap}%
-    \parbox[t]{\InstW}{#2}%
-    \hspace*{\InstGap}%
+    \hspace*{\GutterA}%
+    \parbox[t]{\InstW}{\raggedright #2}%
+    \hspace*{\GutterB}%
     \parbox[t]{\DateW}{\raggedleft #3}%
   }\par
 }
@@ -128,7 +131,7 @@
 
 % Bold inline subheading used inside sections (as in cv.md)
 \newcommand{\cvsubhead}[1]{%
-  \textbf{#1}\par\vspace{2pt}%
+  \textbf{#1}\par
 }
 
 
@@ -174,8 +177,8 @@
 \newcommand{\cvheader}{%
   \begin{center}
     {\Huge \textbf{$name$}} \\[6pt]
-    $affiliation$ | $address1$, $address2$ \\[3pt]
-    \href{mailto:$email$}{$email$} | $phone$
+    $affiliation$\cvsep $address1$, $address2$ \\[3pt]
+    \href{mailto:$email$}{$email$}\cvsep $phone$
   \end{center}
 }
 

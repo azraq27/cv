@@ -18,7 +18,6 @@ phone: "414-955-4653"
 \cvrole{Co-Director, Anesthesiology Clinomics}{Medical College of Wisconsin}{2024 -- present}
 \end{cvroles}
 
-\cvrolesep
 \cvsubhead{Prior Appointments:}
 \begin{cvroles}
 \cvrole{Director, Med. Student Anesth. Clerkship}{Medical College of Wisconsin}{2021 -- 2025}
@@ -52,7 +51,6 @@ phone: "414-955-4653"
 \cvrole{Physician Scientist Training Program}{Dept. of Anesthesiology, MCW}{2014 -- 2018}
 \end{cvroles}
 
-\cvrolesep
 \cvsubhead{Certifications:}
 \begin{cvroles}
 \cvrole{Board certified}{American Board of Anesthesiology}{3/5/20 -- present}
@@ -169,7 +167,6 @@ PMID:16839289
 \cvnote{Dissertation: ``Toward a gold standard: An outcomes-based assessment of fMRI-based methods for probing language laterality in the brain''}
 \end{cvroles}
 
-\cvrolesep
 \cvsubhead{Student Mentees (Residents \& Graduate)}
 \begin{cvroles}
 \cvrole{Michelle Kassel (PhD)}{UWM}{2018 -- 2019}
@@ -179,7 +176,6 @@ PMID:16839289
 \cvrole{Marcus Cooley (Resident)}{MCW}{2022 -- present}
 \end{cvroles}
 
-\cvrolesep
 \cvsubhead{Medical Students}
 \begin{cvroles}
 \cvrole{Ying Qiu Zhou}{MCW}{2013 -- 2014}
@@ -188,7 +184,6 @@ PMID:16839289
 \cvrole{Benjamin Maruska}{MCW}{2021 -- 2024}
 \end{cvroles}
 
-\cvrolesep
 \cvsubhead{Curriculum Development}
 \begin{cvroles}
 \cvrole{Fusion Curriculum}{MCW (Anesthesiology)}{2021 -- 2024}
