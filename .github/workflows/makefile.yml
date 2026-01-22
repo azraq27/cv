@@ -12,11 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: get PMID cache
     - uses: actions/checkout@v4
+    - name: get PMID cache
       run: python3 scripts/pmid_fetch.py --md cv.md --out .cache/pubmed.json
 
-    - name: run pandoc
     - run: mkdir -p build
     - uses: docker://pandoc/core:3.8
       with:
