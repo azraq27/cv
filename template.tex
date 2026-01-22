@@ -3,7 +3,7 @@
 % Adds true bibliography layout for publications
 % =========================
 
-\documentclass[a4paper,11pt]{article}
+\documentclass[letterpaper,11pt]{article}
 
 % Page geometry
 \usepackage[top=0.75in, bottom=0.75in, left=0.6in, right=0.6in]{geometry}
@@ -68,7 +68,7 @@
 \newcommand{\cvsection}[1]{%
   \needspace{6\baselineskip}%
   \vspace{12pt}%
-  {\Large\raggedright\cvsectiontitle{#1}}\par
+  {\fontsize{13}{18}\selectfont\raggedright\cvsectiontitle{#1}}\par
   \vspace{3pt}\hrule\vspace{6pt}%
 }
 \renewcommand{\section}[1]{\cvsection{#1}}
@@ -173,7 +173,10 @@
     \setlength{\parsep}{0pt}%
   }%
 }{\end{list}}
-\newcommand{\cvpub}[1]{\item #1}
+\newcommand{\cvpub}[1]{%
+  \needspace{4\baselineskip}%
+  \item \begin{samepage}#1\end{samepage}%
+}
 
 % 2-col pairs
 % 2-col pairs (left label | right date)
@@ -199,7 +202,7 @@
 % -------------------------
 \newcommand{\cvheader}{%
   \begin{center}
-    {\Huge \textbf{$name$}} \\[6pt]
+    {\fontsize{24.88}{30}\selectfont\textbf{$name$}} \\[6pt]
     $affiliation$\cvsep $address1$, $address2$ \\[3pt]
     \href{mailto:$email$}{$email$}\cvsep $phone$
   \end{center}

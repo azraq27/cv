@@ -82,6 +82,9 @@ phone: "414-955-4653"
 ```{=latex}
 \begin{pubs}
 ```
+PMID:41387573
+
+PMID:40850667
 
 PMID:40424645
 
@@ -157,10 +160,16 @@ PMID:16839289
 ```{=latex}
 \cvsubhead{PhD Mentees \& Committees}
 \begin{cvroles}
+\cvrole{Dewan Imran Ahmed (Mentee)}{MCW, Biomed. Eng.}{2026 -- present}
 \cvrole{Alex Skitowski (Mentee)}{MCW, Biophysics}{2024 -- present}
 \cvrole{Aleksandra Winiarz (Committee)}{MCW, Biophysics}{2021 -- present}
 \cvroleblock{Stephen Mazurchuk (Committee)}{MCW, Biophysics}{Graduated 2024}{\cvnote{Dissertation: ``An Experiential Account of Semantic Category Organization in the Brain''}}
 \cvroleblock{Alexander Helfand (Committee)}{MCW, Biophysics}{Graduated 2020}{\cvnote{Dissertation: ``Toward a gold standard: An outcomes-based assessment of fMRI-based methods for probing language laterality in the brain''}}
+\end{cvroles}
+
+\cvsubhead{Postdoctoral Fellows}
+\begin{cvroles}
+\cvrole{Sunil Mathew, PhD}{MCW, Anesthesiology}{2025 -- present}
 \end{cvroles}
 
 \cvsubhead{Student Mentees (Residents \& Graduate)}
@@ -169,14 +178,14 @@ PMID:16839289
 \cvrole{Kevin Beitz (Resident)}{MCW}{2019 -- 2023}
 \cvrole{Pooria Bakheshi (Resident)}{MCW}{2020 -- 2021}
 \cvrole{Saagar Sheth (Resident)}{MCW}{2021 -- 2025}
-\cvrole{Marcus Cooley (Resident)}{MCW}{2022 -- present}
+\cvrole{Marcus Cooley (Resident)}{MCW}{2022 -- 2026}
 \end{cvroles}
 
 \cvsubhead{Medical Students}
 \begin{cvroles}
 \cvrole{Ying Qiu Zhou}{MCW}{2013 -- 2014}
 \cvrole{Ipsit Shah}{MCW}{2021 -- 2024}
-\cvrole{Ashley Perry}{MCW}{2021 -- present}
+\cvrole{Ashley Perry}{MCW}{2021 -- 2025}
 \cvrole{Benjamin Maruska}{MCW}{2021 -- 2024}
 \end{cvroles}
 
@@ -211,8 +220,9 @@ PMID:16839289
 # Journal Reviews / Study Sections
 ```{=latex}
 \begin{cvpairs}
-\cvpair{NIH, Neurotechnology and Vision Study Section (Invited Reviewer)}{6/2025}
-\cvpair{NIH, LCOM Study Section (Early Career Reviewer)}{2/2024}
+\cvpair{NIH, Special Emphasis Panel: Language, Cognition, and Motor; ZRG1 BP-G(91)}{1/2026}
+\cvpair{NIH, Neurotechnology and Vision Study Section; NV-C(15)}{6/2025}
+\cvpair{NIH, Language and Communications Study Section; LCOM (Early Career Rev.)}{2/2024}
 \cvpair{Journal of Neurosurgical Anesthesia (Editorial Board Member)}{7/2023 -- 7/2025}
 \cvpair{Journal of Neurosurgical Anesthesia (Reviewer)}{since 5/2020}
 \cvpair{NeuroImage (Reviewer)}{since 3/2020}
