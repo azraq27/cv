@@ -12,8 +12,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: get PMID cache
     - uses: actions/checkout@v4
-    - uses: docker://pandoc/core:3.8
+      run: python3 scripts/pmid_fetch.py --md cv.md --out .cache/pubmed.json
 
-    - name: build PDF
-      run: make pdf
+    - name: run pandoc
+    - run: mkdir -p build
+    - uses: docker://pandoc/core:3.8
+      with:
+        args: >-
+          cv.md
+          --template=template.tex
+          --lua-filter=filters/pmid_citations.lua
+          -M pmid_db=.cache/pubmed.json
+          -M pmid_style=cv
+          -M pmid_authors=6
+          --pdf-engine=xelatex
+          -o build/cv.pdf
