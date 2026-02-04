@@ -22,6 +22,7 @@ jobs:
             texlive-fonts-recommended \
             texlive-fonts-extra \
             texlive-bibtex-extra \
+            fonts-texgyre \
             fonts-dejavu-core \
             fonts-liberation \
             fonts-noto-core \
