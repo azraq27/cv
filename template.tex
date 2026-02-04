@@ -11,19 +11,21 @@
 % Font (Didot Regular)
 \usepackage{fontspec}
 \defaultfontfeatures{Ligatures=TeX}
-\setmainfont[
-  Path = fonts/,
-  Extension = .ttf,
-  UprightFont = {BodoniModa-Regular},
-  BoldFont    = {BodoniModa-Regular},
-  ItalicFont  = {BodoniModa-Italic},
-  BoldFeatures   = {RawFeature={+wght=700}},
-  BoldItalicFont = {BodoniModa-Italic},
-  BoldItalicFeatures = {RawFeature={+wght=700}},
-  Ligatures = {Common, TeX},
-  Numbers = Lining,                % use lining numbers — change to OldStyle if you prefer
-  Scale = 1.0
-]{Bodoni Moda}
+\IfFontExistsTF{Times New Roman}
+  {
+    \setmainfont[
+      Ligatures=TeX,
+      Numbers = Lining
+    ]{Times New Roman}
+  }
+  {
+    \setmainfont[
+      Ligatures=TeX,
+      Numbers = Lining
+    ]{TeX Gyre Termes}
+  }
+
+\setmonofont{Inconsolata}
 
 \usepackage{microtype}
 
