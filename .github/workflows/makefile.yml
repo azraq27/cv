@@ -1,4 +1,4 @@
-name: Makefile CI
+name: Build CV
 
 on:
   push:
@@ -8,23 +8,33 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-    - name: get PMID cache
-      run: python3 scripts/pmid_fetch.py --md cv.md --out .cache/pubmed.json
+      - uses: actions/checkout@v4
 
-    - run: mkdir -p build
-    - uses: docker://pandoc/core:3.8
-      with:
-        args: >-
-          cv.md
-          --template=template.tex
-          --lua-filter=filters/pmid_citations.lua
-          -M pmid_db=.cache/pubmed.json
-          -M pmid_style=cv
-          -M pmid_authors=6
-          --pdf-engine=xelatex
-          -o build/cv.pdf
+      - name: Install pandoc + LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pandoc \
+            texlive-xetex \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-fonts-extra \
+            texlive-bibtex-extra \
+            fonts-dejavu-core \
+            fonts-liberation \
+            fonts-noto-core \
+            cm-super
+
+      - name: get PMID cache
+        run: python3 scripts/pmid_fetch.py --md cv.md --out .cache/pubmed.json
+
+      - name: Build PDF (Makefile)
+        run: make        # or `make pdf` if your Makefile has a specific target
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: cv.pdf
+          path: build/cv.pdf
